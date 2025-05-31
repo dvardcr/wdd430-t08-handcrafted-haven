@@ -3,7 +3,9 @@
 import Link from "next/link";
 import {useState} from "react";
 import {Product, Comment} from "@/lib/definitions";
-import {notFound} from "next/navigation";
+import Image from "next/image";
+import {useParams} from "next/navigation";
+// import { notFound } from "next/navigation";
 
 // Temporary dummy data for products - Need to connect DB
 const products: Product[] = [
@@ -27,15 +29,22 @@ const products: Product[] = [
 	},
 ];
 
-interface ProductPageProps {
-	params: {
-		id: string;
-	};
-}
+export default function ProductDetailsPage() {
+	const params = useParams();
+	const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
-export default function ProductDetailsPage({params}: ProductPageProps) {
 	// TODO: Replace dummy product data with real data fetched from database (SQL via Vercel)
-	const product = products.find((p) => p.id === params.id);
+	const product = products.find((p) => p.id === id);
+
+	// Comments state, can add/edit/delete later
+	// TODO: Replace with fetching comments for this product from backend API
+	const [comments, setComments] = useState<Comment[]>([]);
+
+	// Form State
+	const [username, setUsername] = useState("");
+	const [commentText, setCommentText] = useState("");
+	const [rating, setRating] = useState(5);
+	const [editingId, setEditingId] = useState<number | null>(null);
 
 	// If product not found, show the not-found page
 	// if (!product) notFound();
@@ -53,16 +62,6 @@ export default function ProductDetailsPage({params}: ProductPageProps) {
 			</main>
 		);
 	}
-
-	// Comments state, can add/edit/delete later
-	// TODO: Replace with fetching comments for this product from backend API
-	const [comments, setComments] = useState<Comment[]>([]);
-
-	// Form State
-	const [username, setUsername] = useState("");
-	const [commentText, setCommentText] = useState("");
-	const [rating, setRating] = useState(5);
-	const [editingId, setEditingId] = useState<number | null>(null);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -124,7 +123,13 @@ export default function ProductDetailsPage({params}: ProductPageProps) {
 				← Back to Products
 			</Link>
 			<h1>{product.name}</h1>
-			<img src={product.image} alt={product.name} width={300} />
+			<Image
+				src={product.image}
+				alt={product.name}
+				width={300}
+				height={300}
+				style={{objectFit: "cover"}}
+			/>
 			<p>
 				<strong>Price:</strong> ${product.price}
 			</p>
