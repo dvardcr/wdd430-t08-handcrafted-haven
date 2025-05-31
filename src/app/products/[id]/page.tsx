@@ -38,7 +38,21 @@ export default function ProductDetailsPage({params}: ProductPageProps) {
 	const product = products.find((p) => p.id === params.id);
 
 	// If product not found, show the not-found page
-	if (!product) notFound();
+	// if (!product) notFound();
+	if (!product) {
+		return (
+			<main>
+				<h1>Product Not Found</h1>
+				<p>Sorry, we couldn’t find the product you were looking for.</p>
+				<Link
+					href='/products'
+					style={{color: "blue", textDecoration: "underline"}}
+				>
+					← Back to Products
+				</Link>
+			</main>
+		);
+	}
 
 	// Comments state, can add/edit/delete later
 	// TODO: Replace with fetching comments for this product from backend API
