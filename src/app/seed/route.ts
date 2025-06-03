@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 import { artisans, products, reviews, users } from '../../lib/placeholder-data';
+import { Artisan } from '../../lib/utils';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -18,19 +19,20 @@ async function seedUsers() {
   const insertedUsers = await Promise.all(
     users.map(async (user) => {
       const hashedPassword = await bcrypt.hash(user.password, 10);
-      return sql`
+      const result = await sql`
         INSERT INTO users (id, name, email, password)
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
         ON CONFLICT (id) DO NOTHING
         RETURNING *;
       `;
-    }),
+      return result[0];
+    })
   );
 
-  return insertedUsers.map(r => r[0]);
+  return insertedUsers;
 }
 
-async function seedArtisans() {
+async function seedArtisans(): Promise<Artisan[]> {
   await sql`
     CREATE TABLE IF NOT EXISTS artisans (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -49,8 +51,8 @@ async function seedArtisans() {
   `;
 
   const insertedArtisans = await Promise.all(
-    artisans.map(
-      (artisan: any) => sql`
+    artisans.map(async (artisan) => {
+      const result = await sql`
         INSERT INTO artisans (
           name, profile_image_url, location, bio, story, skills,
           twitter_link, portfolio_images, contact_email
@@ -62,14 +64,15 @@ async function seedArtisans() {
           ${artisan.contact_email}
         )
         RETURNING *;
-      `
-    )
+      `;
+      return result[0];
+    })
   );
 
-  return insertedArtisans.map(r => r[0]);
+  return insertedArtisans as Artisan[];
 }
 
-async function seedProducts(insertedArtisans) {
+async function seedProducts(insertedArtisans: Artisan[]) {
   await sql`
     CREATE TABLE IF NOT EXISTS products (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -88,33 +91,33 @@ async function seedProducts(insertedArtisans) {
     );
   `;
 
-  // Map your products and assign artisan_id dynamically:
   const productsWithArtisanId = products.map((product, i) => ({
     ...product,
-    artisan_id: insertedArtisans[i % insertedArtisans.length].id, // simple round-robin assign
+    artisan_id: insertedArtisans[i % insertedArtisans.length].id,
   }));
 
   const insertedProducts = await Promise.all(
-    productsWithArtisanId.map(product =>
-      sql`
+    productsWithArtisanId.map(async (product) => {
+      const result = await sql`
         INSERT INTO products (
           artisan_id, name, description, category, price,
           images, stock_quantity
         )
         VALUES (
           ${product.artisan_id}, ${product.name}, ${product.description}, ${sql.array(product.category)},
-          ${product.price}, ${sql.array(product.images)},
-          ${product.stock_quantity}
+          ${product.price}, ${sql.array(product.images)}, ${product.stock_quantity}
         )
         RETURNING *;
-      `
-    )
+      `;
+      return result[0];
+    })
   );
 
-  return insertedProducts.map(r => r[0]);
+  return insertedProducts.map(r => r[0] as { id: string });
+
 }
 
-async function seedReviews(insertedProducts) {
+async function seedReviews(insertedProducts: { id: string }[]) {
   await sql`
     CREATE TABLE IF NOT EXISTS reviews (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -126,15 +129,14 @@ async function seedReviews(insertedProducts) {
     );
   `;
 
-  // Assign real product_ids dynamically (simple round-robin)
   const reviewsWithProductId = reviews.map((review, i) => ({
     ...review,
     product_id: insertedProducts[i % insertedProducts.length].id,
   }));
 
   const insertedReviews = await Promise.all(
-    reviewsWithProductId.map(review =>
-      sql`
+    reviewsWithProductId.map(async (review) => {
+      const result = await sql`
         INSERT INTO reviews (
           product_id, user_id, rating, comment
         )
@@ -142,16 +144,17 @@ async function seedReviews(insertedProducts) {
           ${review.product_id}, ${review.user_id}, ${review.rating}, ${review.comment}
         )
         RETURNING *;
-      `
-    )
+      `;
+      return result[0];
+    })
   );
 
-  return insertedReviews.map(r => r[0]);
+  return insertedReviews;
 }
 
 export async function GET() {
   try {
-    await sql.begin(async (sql) => {
+    await sql.begin(async () => {
       const artisansSeeded = await seedArtisans();
       const productsSeeded = await seedProducts(artisansSeeded);
       await seedReviews(productsSeeded);
@@ -163,6 +166,7 @@ export async function GET() {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
+    console.error('Seed error:', error);
     return new Response(JSON.stringify({ error }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
