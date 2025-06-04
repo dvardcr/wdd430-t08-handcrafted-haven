@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense } from 'react';
+import {Suspense} from "react";
 import {products} from "@/app/lib/placeholder-data";
 import Search from "@/app/ui/products/search";
 import {useSearchParams} from "next/navigation";
 
-
-export default function ProductsGalleryPage() {
+// Inner component handles search params and filtering
+function ProductsList() {
 	const searchParams = useSearchParams();
 	const query = searchParams.get("query")?.toLowerCase() || "";
 
@@ -22,13 +22,9 @@ export default function ProductsGalleryPage() {
 	});
 
 	return (
-		<main>
-			<h1>All Products</h1>
-
+		<>
 			{/* Use the unified Search component */}
-			<Suspense fallback={<div>Loading search...</div>}>
-				<Search placeholder='Search by name, type, artist, or price' />
-			</Suspense>
+			<Search placeholder='Search by name, type, artist, or price' />
 
 			<div
 				style={{
@@ -72,6 +68,19 @@ export default function ProductsGalleryPage() {
 					<p style={{gridColumn: "1 / -1"}}>No products found.</p>
 				)}
 			</div>
+		</>
+	);
+}
+
+export default function ProductsGalleryPage() {
+	return (
+		<main>
+			<h1>All Products</h1>
+
+			{/* Wrap the ProductsList which uses useSearchParams in Suspense */}
+			<Suspense fallback={<div>Loading products...</div>}>
+				<ProductsList />
+			</Suspense>
 		</main>
 	);
 }
