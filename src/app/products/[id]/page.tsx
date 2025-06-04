@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {useState} from "react";
-import {Product, Comment} from "@/lib/definitions";
+import {Comment} from "@/lib/definitions";
 import Image from "next/image";
 import {useParams} from "next/navigation";
 import { products } from "@/lib/placeholder-data";
