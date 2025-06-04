@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./artisans.module.css";
+import Link from 'next/link';
 
 type Artisan = {
   id: number;
@@ -161,6 +162,12 @@ export default function ArtisansPage() {
               <p className={styles.specialty}>{artisan.specialty}</p>
               <p className={styles.location}>{artisan.location}</p>
               <p className={styles.bio}>{artisan.bio}</p>
+              <Link 
+                href={`/artisans/edit/${artisan.id}`}
+                className={styles.editButton}
+              >
+                Edit Profile
+              </Link>
             </div>
             <div className={styles.products}>
               <h3>Featured Works</h3>
