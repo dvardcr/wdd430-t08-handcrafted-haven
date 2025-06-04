@@ -2,47 +2,36 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {useState} from "react";
-import {products} from "@/lib/placeholder-data";
+import {Suspense} from "react";
+import {products} from "@/app/lib/placeholder-data";
+import Search from "@/app/ui/products/search";
+import {useSearchParams} from "next/navigation";
 
-// Using temp CSS to build the products gallery page
-
-export default function ProductsGalleryPage() {
-	const [searchTerm, setSearchTerm] = useState("");
+// Inner component handles search params and filtering
+function ProductsList() {
+	const searchParams = useSearchParams();
+	const query = searchParams.get("query")?.toLowerCase() || "";
 
 	const filteredProducts = products.filter((product) => {
-		const term = searchTerm.toLowerCase();
 		return (
-			product.name.toLowerCase().includes(term) ||
-			product.artist.toLowerCase().includes(term) ||
-			product.type.toLowerCase().includes(term) ||
-			product.price.toString().includes(term)
+			product.name.toLowerCase().includes(query) ||
+			product.artist.toLowerCase().includes(query) ||
+			product.type.toLowerCase().includes(query) ||
+			product.price.toString().includes(query)
 		);
 	});
 
 	return (
-		<main>
-			<h1>All Products</h1>
-
-			<input
-				type='text'
-				placeholder='Search by artist, type, or price'
-				value={searchTerm}
-				onChange={(e) => setSearchTerm(e.target.value)}
-				style={{
-					marginBottom: "1rem",
-					padding: "0.5rem",
-					width: "100%",
-					maxWidth: "400px",
-					display: "block",
-				}}
-			/>
+		<>
+			{/* Use the unified Search component */}
+			<Search placeholder='Search by name, type, artist, or price' />
 
 			<div
 				style={{
 					display: "grid",
 					gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
 					gap: "1.5rem",
+					marginTop: "1.5rem",
 				}}
 			>
 				{filteredProducts.map((product) => (
@@ -74,7 +63,24 @@ export default function ProductsGalleryPage() {
 						</div>
 					</Link>
 				))}
+
+				{filteredProducts.length === 0 && (
+					<p style={{gridColumn: "1 / -1"}}>No products found.</p>
+				)}
 			</div>
+		</>
+	);
+}
+
+export default function ProductsGalleryPage() {
+	return (
+		<main>
+			<h1>All Products</h1>
+
+			{/* Wrap the ProductsList which uses useSearchParams in Suspense */}
+			<Suspense fallback={<div>Loading products...</div>}>
+				<ProductsList />
+			</Suspense>
 		</main>
 	);
 }
