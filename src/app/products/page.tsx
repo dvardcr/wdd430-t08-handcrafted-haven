@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from 'react';
 import {products} from "@/app/lib/placeholder-data";
 import Search from "@/app/ui/products/search";
 import {useSearchParams} from "next/navigation";
+
 
 export default function ProductsGalleryPage() {
 	const searchParams = useSearchParams();
@@ -24,7 +26,9 @@ export default function ProductsGalleryPage() {
 			<h1>All Products</h1>
 
 			{/* Use the unified Search component */}
-			<Search placeholder='Search by name, type, artist, or price' />
+			<Suspense fallback={<div>Loading search...</div>}>
+				<Search placeholder='Search by name, type, artist, or price' />
+			</Suspense>
 
 			<div
 				style={{
