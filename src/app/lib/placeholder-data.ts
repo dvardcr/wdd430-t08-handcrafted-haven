@@ -1,4 +1,4 @@
-import {Product} from "@/lib/definitions";
+import {Product} from "@/app/lib/definitions";
 
 export const products: Product[] = [
     {
