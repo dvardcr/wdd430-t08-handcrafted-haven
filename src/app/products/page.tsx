@@ -1,47 +1,80 @@
 "use client";
 
 import Link from "next/link";
-import {Product} from "@/lib/definitions";
+import Image from "next/image";
+import {useState} from "react";
+import {products} from "@/lib/placeholder-data";
 
-// Dummy products data
-const products: Product[] = [
-	{
-		id: "123",
-		name: "Handwoven Basket",
-		image: "https://via.placeholder.com/300",
-		description: "A beautifully handwoven basket made from natural materials.",
-		price: 25.99,
-		artist: "Maria Lopez",
-		type: "Home Decor",
-	},
-	{
-		id: "456",
-		name: "Ceramic Mug",
-		image: "https://via.placeholder.com/300",
-		description: "A handmade ceramic mug, perfect for your morning coffee.",
-		price: 14.99,
-		artist: "Jorge Ramirez",
-		type: "Kitchenware",
-	},
-];
+// Using temp CSS to build the products gallery page
 
-export default function ProductsPage() {
+export default function ProductsGalleryPage() {
+	const [searchTerm, setSearchTerm] = useState("");
+
+	const filteredProducts = products.filter((product) => {
+		const term = searchTerm.toLowerCase();
+		return (
+			product.name.toLowerCase().includes(term) ||
+			product.artist.toLowerCase().includes(term) ||
+			product.type.toLowerCase().includes(term) ||
+			product.price.toString().includes(term)
+		);
+	});
+
 	return (
 		<main>
-			<h1>Products</h1>
-			<ul style={{listStyle: "none", paddingLeft: 0}}>
-				{products.map((product) => (
-					<li key={product.id} style={{marginBottom: "1rem"}}>
-						<Link
-							href={`/products/${product.id}`}
-							style={{color: "blue", textDecoration: "underline"}}
+			<h1>All Products</h1>
+
+			<input
+				type='text'
+				placeholder='Search by artist, type, or price'
+				value={searchTerm}
+				onChange={(e) => setSearchTerm(e.target.value)}
+				style={{
+					marginBottom: "1rem",
+					padding: "0.5rem",
+					width: "100%",
+					maxWidth: "400px",
+					display: "block",
+				}}
+			/>
+
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+					gap: "1.5rem",
+				}}
+			>
+				{filteredProducts.map((product) => (
+					<Link key={product.id} href={`/products/${product.id}`}>
+						<div
+							style={{
+								border: "1px solid #ccc",
+								padding: "1rem",
+								borderRadius: "8px",
+							}}
 						>
-							<strong>{product.name}</strong> — ${product.price}
-						</Link>
-						<p>{product.description}</p>
-					</li>
+							<Image
+								src={product.image}
+								alt={product.name}
+								width={300}
+								height={200}
+								style={{objectFit: "cover", width: "100%", height: "auto"}}
+							/>
+							<h2>{product.name}</h2>
+							<p>
+								<strong>Artist:</strong> {product.artist}
+							</p>
+							<p>
+								<strong>Type:</strong> {product.type}
+							</p>
+							<p>
+								<strong>Price:</strong> ${product.price.toFixed(2)}
+							</p>
+						</div>
+					</Link>
 				))}
-			</ul>
+			</div>
 		</main>
 	);
 }

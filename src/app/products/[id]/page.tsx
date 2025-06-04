@@ -5,29 +5,8 @@ import {useState} from "react";
 import {Product, Comment} from "@/lib/definitions";
 import Image from "next/image";
 import {useParams} from "next/navigation";
+import { products } from "@/lib/placeholder-data";
 // import { notFound } from "next/navigation";
-
-// Temporary dummy data for products - Need to connect DB
-const products: Product[] = [
-	{
-		id: "123",
-		name: "Handwoven Basket",
-		image: "https://via.placeholder.com/300",
-		description: "A beautifully handwoven basket made from natural materials.",
-		price: 25.99,
-		artist: "Maria Lopez",
-		type: "Home Decor",
-	},
-	{
-		id: "456",
-		name: "Ceramic Mug",
-		image: "https://via.placeholder.com/300",
-		description: "A handmade ceramic mug, perfect for your morning coffee.",
-		price: 14.99,
-		artist: "Jorge Ramirez",
-		type: "Kitchenware",
-	},
-];
 
 export default function ProductDetailsPage() {
 	const params = useParams();
