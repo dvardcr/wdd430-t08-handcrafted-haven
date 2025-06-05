@@ -27,7 +27,7 @@ export default function LoginPage() {
       } else {
         router.push('/artisans');
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.');
     }
   };

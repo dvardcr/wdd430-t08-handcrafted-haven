@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import type { User } from 'next-auth';
 
 // This is a mock user database - replace with your actual database
 const users = [
@@ -41,7 +42,7 @@ const handler = NextAuth({
             name: user.name,
             email: user.email,
             artisanId: user.artisanId,
-          };
+          } as User;
         }
 
         return null;
@@ -57,7 +58,7 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).artisanId = token.artisanId;
+        session.user.artisanId = token.artisanId;
       }
       return session;
     }

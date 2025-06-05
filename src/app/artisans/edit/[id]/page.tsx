@@ -5,23 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import styles from './edit.module.css';
-
-type Product = {
-  id: number;
-  name: string;
-  imageUrl: string;
-  price: number;
-};
-
-type Artisan = {
-  id: number;
-  name: string;
-  specialty: string;
-  bio: string;
-  imageUrl: string;
-  location: string;
-  products: Product[];
-};
+import type { Artisan } from '@/app/artisans/page';
 
 export default function EditArtisanPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -33,7 +17,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     if (status === 'authenticated') {
       // Check if the authenticated user is the owner of this artisan profile
-      const artisanId = (session.user as any).artisanId;
+      const artisanId = session.user.artisanId;
       if (artisanId !== parseInt(params.id)) {
         router.push('/artisans');
         return;
@@ -86,6 +70,10 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
     }
   };
 
+  const handleImageUpload = () => {
+    // Implement image upload functionality
+  };
+
   if (status === 'loading' || isLoading) {
     return <div>Loading...</div>;
   }
@@ -113,9 +101,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => {
-              // Handle image upload
-            }}
+            onChange={handleImageUpload}
           />
         </div>
 
@@ -161,7 +147,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
 
         <div className={styles.productsSection}>
           <h2>Products</h2>
-          {artisan.products.map((product: Product) => (
+          {artisan.products.map((product) => (
             <div key={product.id} className={styles.productCard}>
               <Image
                 src={product.imageUrl}
@@ -174,7 +160,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
                 type="text"
                 value={product.name}
                 onChange={(e) => {
-                  const updatedProducts = artisan.products.map((p: Product) =>
+                  const updatedProducts = artisan.products.map((p) =>
                     p.id === product.id ? { ...p, name: e.target.value } : p
                   );
                   setArtisan({ ...artisan, products: updatedProducts });
@@ -184,7 +170,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
                 type="number"
                 value={product.price}
                 onChange={(e) => {
-                  const updatedProducts = artisan.products.map((p: Product) =>
+                  const updatedProducts = artisan.products.map((p) =>
                     p.id === product.id ? { ...p, price: Number(e.target.value) } : p
                   );
                   setArtisan({ ...artisan, products: updatedProducts });
@@ -193,9 +179,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => {
-                  // Handle product image upload
-                }}
+                onChange={handleImageUpload}
               />
             </div>
           ))}

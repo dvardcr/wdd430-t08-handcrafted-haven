@@ -21,7 +21,7 @@ export async function GET(
   }
 
   // Check if the authenticated user is the owner of this artisan profile
-  if ((session.user as any).artisanId !== artisanId) {
+  if (session.user.artisanId !== artisanId) {
     return new NextResponse('Unauthorized', { status: 403 });
   }
 
@@ -41,7 +41,7 @@ export async function PUT(
   const artisanId = parseInt(params.id);
   
   // Check if the authenticated user is the owner of this artisan profile
-  if ((session.user as any).artisanId !== artisanId) {
+  if (session.user.artisanId !== artisanId) {
     return new NextResponse('Unauthorized', { status: 403 });
   }
 
@@ -51,7 +51,7 @@ export async function PUT(
     // In a real application, you would update the database here
     // For now, we'll just return the updated data
     return NextResponse.json(updatedArtisan);
-  } catch (error) {
+  } catch {
     return new NextResponse('Invalid request data', { status: 400 });
   }
 } 
