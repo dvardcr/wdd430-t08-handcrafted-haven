@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 import { artisans, products, reviews, users } from '../../lib/placeholder-data';
 import { Artisan } from '../../lib/utils';
+import { NextRequest } from 'next/server';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -30,6 +31,10 @@ async function seedUsers() {
   );
 
   return insertedUsers;
+}
+
+async function dropUsersTableIfExists() {
+  await sql`DROP TABLE IF EXISTS users CASCADE;`;
 }
 
 async function seedArtisans(): Promise<Artisan[]> {
@@ -152,14 +157,54 @@ async function seedReviews(insertedProducts: { id: string }[]) {
   return insertedReviews;
 }
 
-export async function GET() {
+async function modifyReviewsSchema() {
+  await sql`
+    ALTER TABLE reviews
+    ADD COLUMN IF NOT EXISTS name TEXT;
+  `;
+
+  await sql`
+    ALTER TABLE reviews
+    DROP COLUMN IF EXISTS user_id;
+  `
+}
+
+async function modifyArtisansSchema() {
+  sql`
+    ADD COLUMN IF NOT EXISTS password TEXT NOT NULL;  
+  `
+}
+
+export async function GET(request: NextRequest) {
   try {
-    await sql.begin(async () => {
-      const artisansSeeded = await seedArtisans();
-      const productsSeeded = await seedProducts(artisansSeeded);
-      await seedReviews(productsSeeded);
-      await seedUsers();
-    });
+
+    // this will require the URL `http://localhost:3000/seed?fix=true` to be called once. to 
+    const searchParams = request.nextUrl.searchParams;
+    const fixIssues = searchParams.get('fix');
+
+    // add functions to:
+    /**
+      1) Remove the Users table, 
+      2) keep the user name in the reviews table, 
+      3) remove User Id from the reviews table, and 
+      4) add the password column to the Artisans table?
+     */
+
+    if (Boolean(fixIssues)) {
+      await dropUsersTableIfExists(); // 2)
+      await modifyReviewsSchema(); // 2) & 3)
+      await modifyArtisansSchema(); // 4)
+
+    }
+
+    if (!Boolean(fixIssues) || fixIssues == undefined) {
+      await sql.begin(async () => {
+        const artisansSeeded = await seedArtisans();
+        const productsSeeded = await seedProducts(artisansSeeded);
+        await seedReviews(productsSeeded);
+        await seedUsers();
+      });
+    }
 
     return new Response(JSON.stringify({ message: 'Database seeded successfully' }), {
       status: 200,
