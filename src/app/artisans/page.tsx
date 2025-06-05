@@ -2,23 +2,24 @@ import Image from "next/image";
 import styles from "./artisans.module.css";
 import Link from 'next/link';
 
-type Artisan = {
+type Product = {
+  id: number;
+  name: string;
+  imageUrl: string;
+  price: number;
+};
+
+export type Artisan = {
   id: number;
   name: string;
   specialty: string;
   bio: string;
   imageUrl: string;
   location: string;
-  products: {
-    id: number;
-    name: string;
-    imageUrl: string;
-    price: number;
-  }[];
+  products: Product[];
 };
 
-
-const mockArtisans: Artisan[] = [
+export const mockArtisans: Artisan[] = [
   {
     id: 1,
     name: "Emma Thompson",

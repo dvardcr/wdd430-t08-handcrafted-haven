@@ -28,6 +28,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
   const { data: session, status } = useSession();
   const [artisan, setArtisan] = useState<Artisan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -41,12 +42,15 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
       // Fetch artisan data
       const fetchArtisan = async () => {
         try {
-          // Replace with your actual API call
           const response = await fetch(`/api/artisans/${params.id}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch artisan data');
+          }
           const data = await response.json();
           setArtisan(data);
         } catch (error) {
           console.error('Failed to fetch artisan:', error);
+          setError('Failed to load artisan data');
         } finally {
           setIsLoading(false);
         }
@@ -63,8 +67,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
     if (!artisan) return;
 
     try {
-      // Replace with your actual API call
-      await fetch(`/api/artisans/${params.id}`, {
+      const response = await fetch(`/api/artisans/${params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -72,14 +75,23 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
         body: JSON.stringify(artisan),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to update artisan data');
+      }
+
       router.push('/artisans');
     } catch (error) {
       console.error('Failed to update artisan:', error);
+      setError('Failed to update artisan data');
     }
   };
 
   if (status === 'loading' || isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
   }
 
   if (!artisan) {
