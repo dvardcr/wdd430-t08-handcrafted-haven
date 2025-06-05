@@ -3,17 +3,23 @@ import { getServerSession } from 'next-auth';
 import { mockArtisans } from '@/app/artisans/page';
 import type { Artisan } from '@/app/artisans/page';
 
+type RouteContext = {
+  params: {
+    id: string;
+  };
+};
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  context: RouteContext
+): Promise<NextResponse> {
   const session = await getServerSession();
   
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
-  const artisanId = parseInt(params.id);
+  const artisanId = parseInt(context.params.id);
   const artisan = mockArtisans.find((a: Artisan) => a.id === artisanId);
 
   if (!artisan) {
@@ -30,15 +36,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  context: RouteContext
+): Promise<NextResponse> {
   const session = await getServerSession();
   
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
-  const artisanId = parseInt(params.id);
+  const artisanId = parseInt(context.params.id);
   
   // Check if the authenticated user is the owner of this artisan profile
   if (session.user.artisanId !== artisanId) {
@@ -48,8 +54,7 @@ export async function PUT(
   try {
     const updatedArtisan = await request.json();
     
-    // In a real application, you would update the database here
-    // For now, we'll just return the updated data
+
     return NextResponse.json(updatedArtisan);
   } catch {
     return new NextResponse('Invalid request data', { status: 400 });
