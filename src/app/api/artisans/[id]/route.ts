@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { mockArtisans } from '@/app/artisans/page';
-import type { Artisan } from '@/app/artisans/page';
+import { mockArtisans, type Artisan } from '@/lib/mockData';
+import { authOptions } from '@/lib/authOptions';
 
 type RouteContext = {
   params: {
@@ -13,7 +13,7 @@ export async function GET(
   request: NextRequest,
   context: RouteContext
 ): Promise<NextResponse> {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
@@ -38,7 +38,7 @@ export async function PUT(
   request: NextRequest,
   context: RouteContext
 ): Promise<NextResponse> {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
@@ -53,8 +53,6 @@ export async function PUT(
 
   try {
     const updatedArtisan = await request.json();
-    
-
     return NextResponse.json(updatedArtisan);
   } catch {
     return new NextResponse('Invalid request data', { status: 400 });

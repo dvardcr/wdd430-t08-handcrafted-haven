@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import styles from './edit.module.css';
-import type { Artisan } from '@/app/artisans/page';
+import type { Artisan } from '@/lib/mockData';
 
 export default function EditArtisanPage({ params }: { params: { id: string } }) {
   const router = useRouter();
