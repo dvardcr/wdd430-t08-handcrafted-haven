@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import styles from './edit.module.css';
 
 type Product = {
@@ -24,31 +25,19 @@ type Artisan = {
 
 export default function EditArtisanPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [artisan, setArtisan] = useState<Artisan | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check authentication
-    const checkAuth = async () => {
-      try {
-        // Replace with your actual authentication check
-        const response = await fetch('/api/auth/check');
-        const data = await response.json();
-        setIsAuthenticated(data.isAuthenticated);
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
+    if (status === 'authenticated') {
+      // Check if the authenticated user is the owner of this artisan profile
+      const artisanId = (session.user as any).artisanId;
+      if (artisanId !== parseInt(params.id)) {
+        router.push('/artisans');
+        return;
       }
-    };
 
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
       // Fetch artisan data
       const fetchArtisan = async () => {
         try {
@@ -58,12 +47,16 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
           setArtisan(data);
         } catch (error) {
           console.error('Failed to fetch artisan:', error);
+        } finally {
+          setIsLoading(false);
         }
       };
 
       fetchArtisan();
+    } else if (status === 'unauthenticated') {
+      router.push('/login');
     }
-  }, [params.id, isAuthenticated]);
+  }, [params.id, status, session, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,18 +78,8 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
     }
   };
 
-  if (isLoading) {
+  if (status === 'loading' || isLoading) {
     return <div>Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className={styles.authContainer}>
-        <h2>Authentication Required</h2>
-        <p>Please log in to edit your profile.</p>
-        <button onClick={() => router.push('/login')}>Log In</button>
-      </div>
-    );
   }
 
   if (!artisan) {
