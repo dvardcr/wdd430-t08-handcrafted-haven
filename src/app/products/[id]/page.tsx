@@ -5,15 +5,16 @@ import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = {
-	params: {id: string};
-};
+export default async function ProductDetailsPage(props: {
+	params: Promise<{id: string}>;
+}) {
+	const params = await props.params;
+	const id = params.id;
 
-export default async function ProductDetailsPage({params}: Props) {
-	const product = await getProductById(params.id);
+	const product = await getProductById(id);
 	if (!product) return notFound();
 
-	const comments: Comment[] = await getCommentsByProductId(params.id);
+	const comments: Comment[] = await getCommentsByProductId(id);
 
 	return (
 		<main>
