@@ -1,23 +1,14 @@
 import {getProductById, getCommentsByProductId} from "@/app/lib/data";
 import {notFound} from "next/navigation";
-import {Comment} from "@/app/lib/definitions";
 import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
 
-type PageParams = {
-	id: string;
-};
-
-export default async function ProductDetailsPage({
-	params,
-}: {
-	params: PageParams;
-}) {
+export default async function ProductDetailsPage({params}: {params: any}) {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
-	const comments: Comment[] = await getCommentsByProductId(params.id);
+	const comments = await getCommentsByProductId(params.id);
 
 	return (
 		<main>
@@ -68,7 +59,7 @@ export default async function ProductDetailsPage({
 						<li key={c.id}>
 							<strong>{c.username}</strong> – Rating: {c.rating} <br />
 							{c.comment} <br />
-							<small>{c.created_at.toLocaleDateString()}</small>
+							<small>{new Date(c.created_at).toLocaleDateString()}</small>
 						</li>
 					))}
 				</ul>
