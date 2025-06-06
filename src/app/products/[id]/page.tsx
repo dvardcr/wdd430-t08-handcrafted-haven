@@ -1,17 +1,19 @@
 import {getProductById, getCommentsByProductId} from "@/app/lib/data";
 import {notFound} from "next/navigation";
+import {Comment} from "@/app/lib/definitions";
 import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
-import {Comment} from "@/app/lib/definitions";
 
-type Props = {
+interface ProductDetailsPageProps {
 	params: {
 		id: string;
 	};
-};
+}
 
-export default async function ProductDetailsPage({params}: Props) {
+export default async function ProductDetailsPage({
+	params,
+}: ProductDetailsPageProps) {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
@@ -41,9 +43,6 @@ export default async function ProductDetailsPage({params}: Props) {
 				<strong>Price:</strong> ${product.price}
 			</p>
 			<p>
-				<strong>Description:</strong> {product.description}
-			</p>
-			<p>
 				<strong>Artist:</strong> {product.artist}
 			</p>
 			<p>
@@ -64,9 +63,11 @@ export default async function ProductDetailsPage({params}: Props) {
 				<ul>
 					{comments.map((c) => (
 						<li key={c.id}>
-							<strong>{c.username}</strong> – Rating: {c.rating} <br />
-							{c.comment} <br />
-							<small>{c.created_at.toLocaleDateString()}</small>
+							<strong>{c.username}</strong> – Rating: {c.rating}
+							<br />
+							{c.comment}
+							<br />
+							<small>{new Date(c.created_at).toLocaleDateString()}</small>
 						</li>
 					))}
 				</ul>
