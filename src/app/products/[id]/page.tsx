@@ -5,11 +5,13 @@ import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function ProductDetailsPage({
-	params,
-}: {
+type Props = {
 	params: {id: string};
-}) {
+};
+
+export const dynamic = "force-dynamic";
+
+export const ProductDetailsPage = async ({params}: Props) => {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
@@ -70,4 +72,6 @@ export default async function ProductDetailsPage({
 			)}
 		</main>
 	);
-}
+};
+
+export default ProductDetailsPage;
