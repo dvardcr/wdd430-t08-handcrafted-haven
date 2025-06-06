@@ -1,15 +1,15 @@
-import { getProductById, getCommentsByProductId } from '@/app/lib/data';
-import { notFound } from 'next/navigation';
-import { Comment } from '@/app/lib/definitions';
-import ReviewForm from '@/app/ui/reviews/review-form';
-import Image from 'next/image';
-import Link from 'next/link';
+import {getProductById, getCommentsByProductId} from "@/app/lib/data";
+import {notFound} from "next/navigation";
+import {Comment} from "@/app/lib/definitions";
+import ReviewForm from "@/app/ui/reviews/review-form";
+import Image from "next/image";
+import Link from "next/link";
 
-interface Props {
-	params: { id: string };
-}
-
-export default async function ProductDetailsPage({ params }: Props) {
+export default async function ProductDetailsPage({
+	params,
+}: {
+	params: {id: string};
+}) {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
@@ -17,16 +17,36 @@ export default async function ProductDetailsPage({ params }: Props) {
 
 	return (
 		<main>
-			<Link href="/products" style={{ textDecoration: 'underline', marginBottom: '1rem', display: 'inline-block' }}>
+			<Link
+				href='/products'
+				style={{
+					textDecoration: "underline",
+					marginBottom: "1rem",
+					display: "inline-block",
+				}}
+			>
 				← Back to Products
 			</Link>
 
 			<h1>{product.name}</h1>
-			<Image src={product.image_url} alt={product.name} width={300} height={300} />
-			<p><strong>Price:</strong> ${product.price}</p>
-			<p><strong>Description:</strong> {product.description}</p>
-			<p><strong>Artist:</strong> {product.artist}</p>
-			<p><strong>Type:</strong> {product.category}</p>
+			<Image
+				src={product.image_url}
+				alt={product.name}
+				width={300}
+				height={300}
+			/>
+			<p>
+				<strong>Price:</strong> ${product.price}
+			</p>
+			<p>
+				<strong>Description:</strong> {product.description}
+			</p>
+			<p>
+				<strong>Artist:</strong> {product.artist}
+			</p>
+			<p>
+				<strong>Type:</strong> {product.category}
+			</p>
 
 			<hr />
 
