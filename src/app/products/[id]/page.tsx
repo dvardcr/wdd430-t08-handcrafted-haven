@@ -9,9 +9,7 @@ type Props = {
 	params: {id: string};
 };
 
-export const dynamic = "force-dynamic";
-
-export const ProductDetailsPage = async ({params}: Props) => {
+export default async function ProductDetailsPage({params}: Props) {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
@@ -72,6 +70,4 @@ export const ProductDetailsPage = async ({params}: Props) => {
 			)}
 		</main>
 	);
-};
-
-export default ProductDetailsPage;
+}
