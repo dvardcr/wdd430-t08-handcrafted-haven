@@ -1,23 +1,42 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/app/lib/data';
 
-function validateReview(data: any) {
+function validateReview(data: unknown): data is {
+    product_id: string;
+    username: string;
+    comment: string;
+    rating: number;
+} {
     if (
         !data ||
-        typeof data.product_id !== 'string' ||
-        !/^[0-9a-fA-F-]{36}$/.test(data.product_id) ||
-        typeof data.username !== 'string' ||
-        data.username.trim().length === 0 ||
-        typeof data.comment !== 'string' ||
-        data.comment.trim().length === 0 ||
-        typeof data.rating !== 'number' ||
-        !Number.isInteger(data.rating) ||
-        data.rating < 1 ||
-        data.rating > 5
+        typeof data !== 'object' ||
+        !('product_id' in data) ||
+        !('username' in data) ||
+        !('comment' in data) ||
+        !('rating' in data)
     ) {
         return false;
     }
-    return true;
+
+    const { product_id, username, comment, rating } = data as {
+        product_id: unknown;
+        username: unknown;
+        comment: unknown;
+        rating: unknown;
+    };
+
+    return (
+        typeof product_id === 'string' &&
+        /^[0-9a-fA-F-]{36}$/.test(product_id) &&
+        typeof username === 'string' &&
+        username.trim().length > 0 &&
+        typeof comment === 'string' &&
+        comment.trim().length > 0 &&
+        typeof rating === 'number' &&
+        Number.isInteger(rating) &&
+        rating >= 1 &&
+        rating <= 5
+    );
 }
 
 export async function POST(req: Request) {
@@ -28,15 +47,21 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
         }
 
+        const { product_id, username, comment, rating } = body;
+
         const [newReview] = await sql`
         INSERT INTO reviews (product_id, username, comment, rating)
-        VALUES (${body.product_id}, ${body.username.trim()}, ${body.comment.trim()}, ${body.rating})
+        VALUES (${product_id}, ${username.trim()}, ${comment.trim()}, ${rating})
         RETURNING id, username, comment, rating, created_at
         `;
 
         return NextResponse.json(newReview, { status: 201 });
-    } catch (error) {
-        console.error('POST /api/reviews error:', error);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+        console.error('POST /api/reviews error:', error.message);
+        } else {
+        console.error('POST /api/reviews unknown error:', error);
+        }
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }
 }
