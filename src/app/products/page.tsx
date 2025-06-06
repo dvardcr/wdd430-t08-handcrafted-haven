@@ -20,8 +20,9 @@ export default async function ProductsGalleryPage() {
 	return (
 		<main>
 			<h1>All Products</h1>
-			<Search placeholder='Search by name, type, artist, or price' />
+			
 			<Suspense fallback={<div>Loading products...</div>}>
+				<Search placeholder='Search by name, type, artist, or price' />
 				<ProductsList products={products} />
 			</Suspense>
 		</main>
