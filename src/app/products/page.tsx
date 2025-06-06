@@ -1,85 +1,29 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
-import {Suspense} from "react";
-import {products} from "@/app/lib/placeholder-data";
+import {fetchProducts} from "@/app/lib/data";
 import Search from "@/app/ui/products/search";
-import {useSearchParams} from "next/navigation";
+import ProductsList from "@/app/ui/products/product-list";
+import {Suspense} from "react";
+import {Product} from "@/app/lib/definitions";
 
-// Inner component handles search params and filtering
-function ProductsList() {
-	const searchParams = useSearchParams();
-	const query = searchParams.get("query")?.toLowerCase() || "";
+export default async function ProductsGalleryPage() {
+	const rows = await fetchProducts();
 
-	const filteredProducts = products.filter((product) => {
-		return (
-			product.name.toLowerCase().includes(query) ||
-			product.artist.toLowerCase().includes(query) ||
-			product.type.toLowerCase().includes(query) ||
-			product.price.toString().includes(query)
-		);
-	});
+	const products: Product[] = rows.map(row => ({
+		id: row.id,
+    	name: row.name,
+    	description: row.description,
+    	imageUrl: row.image_url,
+    	price: Number(row.price),
+    	category: row.category,
+    	artist: row.artist,
+	}));
 
-	return (
-		<>
-			{/* Use the unified Search component */}
-			<Search placeholder='Search by name, type, artist, or price' />
-
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-					gap: "1.5rem",
-					marginTop: "1.5rem",
-				}}
-			>
-				{filteredProducts.map((product) => (
-					<Link key={product.id} href={`/products/${product.id}`}>
-						<div
-							style={{
-								border: "1px solid #ccc",
-								padding: "1rem",
-								borderRadius: "8px",
-							}}
-						>
-							<Image
-								src={product.image}
-								alt={product.name}
-								width={300}
-								height={200}
-								style={{objectFit: "cover", width: "100%", height: "auto"}}
-							/>
-							<h2>{product.name}</h2>
-							<p>
-								<strong>Artist:</strong> {product.artist}
-							</p>
-							<p>
-								<strong>Type:</strong> {product.type}
-							</p>
-							<p>
-								<strong>Price:</strong> ${product.price.toFixed(2)}
-							</p>
-						</div>
-					</Link>
-				))}
-
-				{filteredProducts.length === 0 && (
-					<p style={{gridColumn: "1 / -1"}}>No products found.</p>
-				)}
-			</div>
-		</>
-	);
-}
-
-export default function ProductsGalleryPage() {
 	return (
 		<main>
 			<h1>All Products</h1>
-
-			{/* Wrap the ProductsList which uses useSearchParams in Suspense */}
+			
 			<Suspense fallback={<div>Loading products...</div>}>
-				<ProductsList />
+				<Search placeholder='Search by name, type, artist, or price' />
+				<ProductsList products={products} />
 			</Suspense>
 		</main>
 	);
