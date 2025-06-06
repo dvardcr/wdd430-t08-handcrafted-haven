@@ -1,16 +1,16 @@
-export type Comment = {
-    id: number;
-    username: string;
-    text: string;
-    rating: number;
-};
-
+export interface Comment {
+	id: string;
+	username: string;
+	comment: string;
+	rating: number;
+	created_at: Date;
+}
 export type Product = {
-    id: string;
+    id: number;
     name: string;
-    image: string;
     description: string;
+    imageUrl: string;
     price: number;
+    category: string;
     artist: string;
-    type: string;
 };
