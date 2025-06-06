@@ -6,7 +6,7 @@ export interface Comment {
 	created_at: Date;
 }
 export type Product = {
-    id: number;
+    id: string;
     name: string;
     description: string;
     imageUrl: string;
