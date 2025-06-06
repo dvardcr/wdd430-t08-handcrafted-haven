@@ -3,16 +3,19 @@ import {notFound} from "next/navigation";
 import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
+import {Comment} from "@/app/lib/definitions";
 
-export default async function ProductDetailsPage({
-	params,
-}: {
-	params: {id: string};
-}) {
+type Props = {
+	params: {
+		id: string;
+	};
+};
+
+export default async function ProductDetailsPage({params}: Props) {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
-	const comments = await getCommentsByProductId(params.id);
+	const comments: Comment[] = await getCommentsByProductId(params.id);
 
 	return (
 		<main>
@@ -63,7 +66,7 @@ export default async function ProductDetailsPage({
 						<li key={c.id}>
 							<strong>{c.username}</strong> – Rating: {c.rating} <br />
 							{c.comment} <br />
-							<small>{new Date(c.created_at).toLocaleDateString()}</small>
+							<small>{c.created_at.toLocaleDateString()}</small>
 						</li>
 					))}
 				</ul>
