@@ -4,7 +4,11 @@ import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function ProductDetailsPage({params}: {params: any}) {
+export default async function ProductDetailsPage({
+	params,
+}: {
+	params: {id: string};
+}) {
 	const product = await getProductById(params.id);
 	if (!product) return notFound();
 
