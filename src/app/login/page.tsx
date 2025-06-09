@@ -10,10 +10,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
       const result = await signIn('credentials', {
@@ -27,8 +29,10 @@ export default function LoginPage() {
       } else {
         router.push('/artisans');
       }
-    } catch {
+    } catch (error) {
       setError('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,6 +50,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <div className={styles.formGroup}>
@@ -56,10 +61,15 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
-          <button type="submit" className={styles.submitButton}>
-            Log In
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
       </div>

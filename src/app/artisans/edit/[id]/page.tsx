@@ -7,6 +7,13 @@ import { useSession } from 'next-auth/react';
 import styles from './edit.module.css';
 import type { Artisan } from '@/lib/mockData';
 
+interface Product {
+  id: number;
+  name: string;
+  imageUrl: string;
+  price: number;
+}
+
 export default function EditArtisanPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -147,7 +154,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
 
         <div className={styles.productsSection}>
           <h2>Products</h2>
-          {artisan.products.map((product) => (
+          {artisan.products.map((product: Product) => (
             <div key={product.id} className={styles.productCard}>
               <Image
                 src={product.imageUrl}
@@ -160,7 +167,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
                 type="text"
                 value={product.name}
                 onChange={(e) => {
-                  const updatedProducts = artisan.products.map((p) =>
+                  const updatedProducts = artisan.products.map((p: Product) =>
                     p.id === product.id ? { ...p, name: e.target.value } : p
                   );
                   setArtisan({ ...artisan, products: updatedProducts });
@@ -170,7 +177,7 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
                 type="number"
                 value={product.price}
                 onChange={(e) => {
-                  const updatedProducts = artisan.products.map((p) =>
+                  const updatedProducts = artisan.products.map((p: Product) =>
                     p.id === product.id ? { ...p, price: Number(e.target.value) } : p
                   );
                   setArtisan({ ...artisan, products: updatedProducts });

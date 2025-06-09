@@ -3,6 +3,24 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import type { NextAuthOptions } from 'next-auth';
 import type { User } from 'next-auth';
 
+// Extend the built-in session types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      artisanId: number;
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    artisanId: number;
+  }
+}
+
 // This is a mock user database - replace with your actual database
 const users = [
   {
