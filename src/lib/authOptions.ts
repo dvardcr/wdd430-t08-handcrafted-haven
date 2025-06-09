@@ -21,7 +21,7 @@ declare module "next-auth/jwt" {
   }
 }
 
-// This is a mock user database - replace with your actual database
+// This is a mock user database - replace with actual database
 const users = [
   {
     id: '1',
