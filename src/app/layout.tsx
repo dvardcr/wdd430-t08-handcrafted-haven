@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
 import { geistMono, geistSans } from "@/app/ui/fonts";
 import "@/app/ui/global.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${robotoMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers>{children}</Providers>
       </body>
     </html>
