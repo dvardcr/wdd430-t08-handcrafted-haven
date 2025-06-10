@@ -8,5 +8,6 @@ export const Playfair = Playfair_Display({
 
 export const lato = Lato({
   variable: '--font-lato',
-  weight: "100"
+  weight: "100",
+  subsets: ["latin"],
 });
