@@ -11,10 +11,14 @@
   "dependencies": {
     "@auth/core": "0.34.2",
     "@heroicons/react": "^2.2.0",
+    "bcrypt": "^6.0.0",
+    "clsx": "^2.1.1",
     "next": "14.1.0",
     "next-auth": "^4.24.5",
+    "postgres": "^3.4.7",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,8 +26,11 @@
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",
     "@types/next-auth": "^3.15.0",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "postcss": "^8.5.4",
+    "tailwindcss": "3.4.1",
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"

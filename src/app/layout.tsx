@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
-import "./globals.css";
-import { Providers } from './providers';
+import { geistMono, geistSans } from "@/app/ui/fonts";
+import "@/app/ui/global.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
