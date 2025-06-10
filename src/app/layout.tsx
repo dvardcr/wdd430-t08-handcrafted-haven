@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { geistMono, geistSans } from "@/app/ui/fonts";
+import { Playfair, lato } from "@/app/ui/fonts";
 import "@/app/ui/global.css";
-
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className={`${Playfair.variable} ${lato.variable}`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
