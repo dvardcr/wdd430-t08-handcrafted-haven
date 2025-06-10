@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { geistMono, geistSans } from "@/app/ui/fonts";
+import { Playfair, lato } from "@/app/ui/fonts";
 import "@/app/ui/global.css";
 import { Providers } from './providers';
 
@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${Playfair.variable} ${lato.variable}`}>
         <Providers>{children}</Providers>
       </body>
     </html>

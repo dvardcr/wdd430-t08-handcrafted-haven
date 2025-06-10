@@ -1,12 +1,11 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Lato } from "next/font/google";
 
 
-export const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+export const Playfair = Playfair_Display({
+  variable: "--font-playfair_display",
 });
 
-export const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+export const lato = Lato({
+  variable: '--font-lato',
+  weight: "100"
 });
