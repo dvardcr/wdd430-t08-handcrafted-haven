@@ -14,7 +14,7 @@ export async function GET(
   context: RouteContext
 ): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
@@ -39,13 +39,13 @@ export async function PUT(
   context: RouteContext
 ): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
   const artisanId = parseInt(context.params.id);
-  
+
   // Check if the authenticated user is the owner of this artisan profile
   if (session.user.artisanId !== artisanId) {
     return new NextResponse('Unauthorized', { status: 403 });
