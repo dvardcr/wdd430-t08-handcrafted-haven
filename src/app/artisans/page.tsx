@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "./artisans.module.css";
+import styles from "@/app/ui/general/artisans.module.css";
 import Link from 'next/link';
 import { mockArtisans, type Artisan } from '@/lib/mockData';
 
