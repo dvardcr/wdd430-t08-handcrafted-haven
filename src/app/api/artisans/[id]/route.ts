@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { mockArtisans, type Artisan } from '@/lib/mockData';
 import { authOptions } from '@/lib/authOptions';
+import { updateArtisanPassword } from '@/app/lib/data';
 
 type RouteContext = {
   params: {
@@ -41,20 +42,42 @@ export async function PUT(
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
   }
 
   const artisanId = parseInt(context.params.id);
 
-  // Check if the authenticated user is the owner of this artisan profile
   if (session.user.artisanId !== artisanId) {
-    return new NextResponse('Unauthorized', { status: 403 });
+    return new NextResponse(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
   }
 
   try {
-    const updatedArtisan = await request.json();
-    return NextResponse.json(updatedArtisan);
-  } catch {
-    return new NextResponse('Invalid request data', { status: 400 });
+    const body = await request.json();
+
+    // Check for the action flag
+    if (body.action === 'update_password') {
+
+      const { newPassword } = body;
+      if (!newPassword) {
+        return new NextResponse(JSON.stringify({ message: 'Password must be not be empty' }), { status: 400 });
+      }
+
+      const success = await updateArtisanPassword(body.email, newPassword);
+
+      if (success) {
+        return NextResponse.json({ message: 'Password updated successfully' });
+      } else {
+        return new NextResponse(JSON.stringify({ message: 'Artisan not found' }), { status: 404 });
+      }
+
+    } else {
+      const updatedArtisanData = body;
+      console.log("Updating artisan profile data:", updatedArtisanData);
+      return NextResponse.json(updatedArtisanData);
+    }
+
+  } catch (error) {
+    console.error("API PUT Error:", error);
+    return new NextResponse(JSON.stringify({ message: 'Invalid request data' }), { status: 400 });
   }
 } 
