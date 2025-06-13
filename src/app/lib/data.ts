@@ -3,8 +3,17 @@ import { Comment } from '@/app/lib/definitions';
 
 export const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+export async function updateArtisanPassword(email: string, password: string) {
+	return await sql`
+	UPDATE artisans
+	SET password = ${password}
+	WHERE email = ${email}
+	RETURNING *;
+	`;
+}
+
 export async function fetchProducts() {
-    return await sql`
+	return await sql`
     SELECT 
         p.id, 
         p.name, 

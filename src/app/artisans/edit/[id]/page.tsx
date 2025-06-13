@@ -20,6 +20,9 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
   const [artisan, setArtisan] = useState<Artisan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(false);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -48,10 +51,22 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
       };
 
       fetchArtisan();
+
     } else if (status === 'unauthenticated') {
       router.push('/login');
     }
+
+
   }, [params.id, status, session, router]);
+
+  useEffect(() => {
+    if (Boolean(String(newPassword)) && password === newPassword) {
+      console.log("match!");
+      setPasswordMatch(true);
+    } else {
+      setPasswordMatch(false);
+    }
+  }, [password, newPassword]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,8 +92,35 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
     }
   };
 
+
+
   const handleImageUpload = () => {
     // Implement image upload functionality
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    try {
+      const response = await fetch(`/api/artisans/${session?.user.artisanId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_password',
+          newPassword: newPassword,
+          email: session?.user.email
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change password.');
+      }
+
+      setPassword('');
+      setNewPassword('');
+    } catch (error: any) {
+      console.error('Failed to update password:', error);
+      setError(error.message);
+    }
   };
 
   if (status === 'loading' || isLoading) {
@@ -112,6 +154,26 @@ export default function EditArtisanPage({ params }: { params: { id: string } }) 
           />
         </div>
 
+        <hr></hr>
+        <h3 className="text-center">Need an update on your password?</h3>
+        <div className={styles.formGroup}>
+          <label htmlFor="password-change">New Password</label>
+          <input
+            name="password-change"
+            type="text"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <label htmlFor="password-change">Confirm New Password</label>
+          <input
+            name="password-change"
+            type="text"
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <button type="button" onClick={handlePasswordSubmit} className={styles.saveButton} disabled={!passwordMatch}>Change Password</button>
+        </div>
+
+        <hr></hr>
+        <h3 className="text-center">Need an update on your data?</h3>
         <div className={styles.formGroup}>
           <label htmlFor="name">Name</label>
           <input
