@@ -136,6 +136,23 @@
   background-color: var(--accent-hover);
 }
 
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: var(--foreground);
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #dc2626;
+  background-color: #fee2e2;
+  border-radius: 8px;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
