@@ -61,6 +61,7 @@ export async function getCommentsByProductId(productId: string): Promise<Comment
 
 	return rows.map((row) => ({
 		id: row.id as string,
+		user_id: row.user_id,
 		username: row.username as string,
 		comment: row.comment as string,
 		rating: row.rating as number,
