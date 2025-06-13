@@ -3,7 +3,7 @@ import { sql } from '@/app/lib/data';
 
 function validateReview(data: unknown): data is {
     product_id: string;
-    username: string;
+    user_id: string;
     comment: string;
     rating: number;
 } {
@@ -11,16 +11,16 @@ function validateReview(data: unknown): data is {
         !data ||
         typeof data !== 'object' ||
         !('product_id' in data) ||
-        !('username' in data) ||
+        !('user_id' in data) ||
         !('comment' in data) ||
         !('rating' in data)
     ) {
-        return false;
+    return false;
     }
 
-    const { product_id, username, comment, rating } = data as {
+    const { product_id, user_id, comment, rating } = data as {
         product_id: unknown;
-        username: unknown;
+        user_id: unknown;
         comment: unknown;
         rating: unknown;
     };
@@ -28,8 +28,8 @@ function validateReview(data: unknown): data is {
     return (
         typeof product_id === 'string' &&
         /^[0-9a-fA-F-]{36}$/.test(product_id) &&
-        typeof username === 'string' &&
-        username.trim().length > 0 &&
+        typeof user_id === 'string' &&
+        /^[0-9a-fA-F-]{36}$/.test(user_id) &&
         typeof comment === 'string' &&
         comment.trim().length > 0 &&
         typeof rating === 'number' &&
@@ -47,15 +47,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
         }
 
-        const { product_id, username, comment, rating } = body;
+    const { product_id, user_id, comment, rating } = body;
 
-        const [newReview] = await sql`
-        INSERT INTO reviews (product_id, username, comment, rating)
-        VALUES (${product_id}, ${username.trim()}, ${comment.trim()}, ${rating})
-        RETURNING id, username, comment, rating, created_at
-        `;
+    const [newReview] = await sql`
+        INSERT INTO reviews (product_id, user_id, comment, rating)
+        VALUES (${product_id}, ${user_id}, ${comment.trim()}, ${rating})
+        RETURNING id, user_id, comment, rating, created_at
+    `;
 
-        return NextResponse.json(newReview, { status: 201 });
+    return NextResponse.json(newReview, { status: 201 });
     } catch (error: unknown) {
         if (error instanceof Error) {
         console.error('POST /api/reviews error:', error.message);

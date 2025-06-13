@@ -47,14 +47,21 @@ export async function getProductById(id: string) {
 
 export async function getCommentsByProductId(productId: string): Promise<Comment[]> {
 	const rows = await sql`
-		SELECT id, username, comment, rating, created_at
-		FROM reviews
-		WHERE product_id = ${productId}
-		ORDER BY created_at DESC
+		SELECT 
+			r.id, 
+			u.username, 
+			r.comment, 
+			r.rating, 
+			r.created_at
+		FROM reviews r
+		JOIN users u ON r.user_id = u.id
+		WHERE r.product_id = ${productId}
+		ORDER BY r.created_at DESC
 	`;
 
 	return rows.map((row) => ({
 		id: row.id as string,
+		user_id: row.user_id,
 		username: row.username as string,
 		comment: row.comment as string,
 		rating: row.rating as number,
