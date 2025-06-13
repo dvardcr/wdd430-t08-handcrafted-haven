@@ -1,5 +1,4 @@
 import {getProductById, getCommentsByProductId} from "@/app/lib/data";
-import {getCurrentUser} from "@/lib/auth";
 import {notFound} from "next/navigation";
 import {Comment} from "@/app/lib/definitions";
 import ReviewForm from "@/app/ui/reviews/review-form";
@@ -16,8 +15,6 @@ export default async function ProductDetailsPage(props: {
 	if (!product) return notFound();
 
 	const comments: Comment[] = await getCommentsByProductId(id);
-
-	const currentUser = await getCurrentUser();
 
 	return (
 		<main>
@@ -52,11 +49,7 @@ export default async function ProductDetailsPage(props: {
 			<hr />
 
 			<h2>Leave a Comment</h2>
-			<ReviewForm
-				productId={product.id}
-				existingComments={comments}
-				currentUser={currentUser}
-			/>
+			<ReviewForm productId={product.id} existingComments={comments} />
 
 			<hr />
 
