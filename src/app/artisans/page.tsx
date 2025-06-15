@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "@/app/ui/general/artisans.module.css";
+import styles from "@/app/style.module.css";
 import Link from 'next/link';
 import { mockArtisans, type Artisan } from '@/lib/mockData';
 
@@ -39,6 +39,7 @@ export default function ArtisansPage() {
               <h3>Featured Works</h3>
               <div className={styles.productGrid}>
                 {artisan.products.map((product) => (
+                  
                   <div key={product.id} className={styles.productCard}>
                     <Image
                       src={product.imageUrl}

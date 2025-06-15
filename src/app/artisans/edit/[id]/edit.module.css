@@ -37,6 +37,7 @@
   padding: 0.5rem;
   border: 1px solid var(--gray-alpha-200);
   border-radius: 4px;
+  color: black;
 }
 
 .productsSection {
@@ -45,6 +46,10 @@
   gap: 1rem;
 }
 
+.productsSection input {
+  color: black;
+  text-align: center;
+}
 .productCard {
   display: flex;
   align-items: center;
