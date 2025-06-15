@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {useSearchParams} from "next/navigation";
 import {Product} from "@/app/lib/definitions";
+import styles from "@/app/style.module.css";
 
 export default function ProductsList({products}: {products: Product[]}) {
 	const searchParams = useSearchParams();
@@ -19,22 +20,12 @@ export default function ProductsList({products}: {products: Product[]}) {
 	);
 
 	return (
-		<div
-			style={{
-				display: "grid",
-				gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-				gap: "1.5rem",
-				marginTop: "1.5rem",
-			}}
+		<div className={styles.productPage}
 		>
+			
 			{filteredProducts.map((product) => (
 				<Link key={product.id} href={`/products/${product.id}`}>
-					<div
-						style={{
-							border: "1px solid #ccc",
-							padding: "1rem",
-							borderRadius: "8px",
-						}}
+					<div className={styles.productCard}
 					>
 						<Image
 							src={product.imageUrl}

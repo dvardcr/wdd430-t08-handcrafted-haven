@@ -4,6 +4,7 @@ import {Comment} from "@/app/lib/definitions";
 import ReviewForm from "@/app/ui/reviews/review-form";
 import Image from "next/image";
 import Link from "next/link";
+import styles from "@/app/style.module.css";
 
 export default async function ProductDetailsPage(props: {
 	params: Promise<{id: string}>;
@@ -18,6 +19,7 @@ export default async function ProductDetailsPage(props: {
 
 	return (
 		<main>
+			<h1 className={styles.title}>Handcrafted Haven</h1>
 			<Link
 				href='/products'
 				style={{
@@ -29,33 +31,34 @@ export default async function ProductDetailsPage(props: {
 				← Back to Products
 			</Link>
 
-			<h1>{product.name}</h1>
+			<div className={styles.productDetailsCard}>
+			<h1 className={styles.productHead}>{product.name}</h1>
 			<Image
 				src={product.image_url}
 				alt={product.name}
 				width={300}
 				height={300}
 			/>
-			<p>
+			<p className={styles.productDetailsChild}>
 				<strong>Price:</strong> ${product.price}
 			</p>
-			<p>
+			<p className={styles.productDetailsChild}>
 				<strong>Artist:</strong> {product.artist}
 			</p>
-			<p>
+			<p className={styles.productDetailsChild}>
 				<strong>Type:</strong> {product.category}
 			</p>
 
 			<hr />
 
-			<h2>Leave a Comment</h2>
+			<h2 className={styles.productDetailsChild}><strong>Leave a Comment</strong></h2>
 			<ReviewForm productId={product.id} existingComments={comments} />
 
 			<hr />
 
-			<h2>Comments</h2>
+			<h2 className={styles.productDetailsChild}>Comments</h2>
 			{comments.length === 0 ? (
-				<p>No comments yet.</p>
+				<p className={styles.productDetailsChild}>No comments yet.</p>
 			) : (
 				<ul>
 					{comments.map((c) => (
@@ -69,6 +72,7 @@ export default async function ProductDetailsPage(props: {
 					))}
 				</ul>
 			)}
+			</div>
 		</main>
 	);
 }

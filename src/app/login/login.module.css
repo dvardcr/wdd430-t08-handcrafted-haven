@@ -18,7 +18,8 @@
 .formContainer h1 {
   text-align: center;
   margin-bottom: 2rem;
-  color: var(--text-primary);
+  color: black;
+  font-weight: bold;
 }
 
 .form {
@@ -35,21 +36,22 @@
 
 .formGroup label {
   font-weight: 500;
-  color: var(--text-primary);
+  color: black;
 }
 
 .formGroup input {
   padding: 0.75rem;
-  border: 1px solid var(--gray-alpha-200);
+  border: 1px solid gray;
   border-radius: 4px;
   font-size: 1rem;
+  color: black;
 }
 
 .submitButton {
-  background-color: var(--accent);
+  background-color: black;
   color: white;
   padding: 0.75rem;
-  border: none;
+  border: 1px solid black;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
@@ -57,7 +59,8 @@
 }
 
 .submitButton:hover {
-  background-color: var(--accent-hover);
+  color: black;
+  background-color: white;
 }
 
 .error {
