@@ -2,41 +2,41 @@ import { NextResponse } from 'next/server';
 import { sql } from '@/app/lib/data';
 
 function validateReview(data: unknown): data is {
-    product_id: string;
-    username: string;
-    comment: string;
-    rating: number;
+	product_id: string;
+	username: string;
+	comment: string;
+	rating: number;
 } {
-    if (
-        !data ||
-        typeof data !== 'object' ||
-        !('product_id' in data) ||
-        !('username' in data) ||
-        !('comment' in data) ||
-        !('rating' in data)
-    ) {
-        return false;
-    }
+	if (
+		!data ||
+		typeof data !== 'object' ||
+		!('product_id' in data) ||
+		!('username' in data) ||
+		!('comment' in data) ||
+		!('rating' in data)
+	) {
+		return false;
+	}
 
-    const { product_id, username, comment, rating } = data as {
-        product_id: unknown;
-        username: unknown;
-        comment: unknown;
-        rating: unknown;
-    };
+	const { product_id, username, comment, rating } = data as {
+		product_id: unknown;
+		username: unknown;
+		comment: unknown;
+		rating: unknown;
+	};
 
-    return (
-        typeof product_id === 'string' &&
-        /^[0-9a-fA-F-]{36}$/.test(product_id) &&
-        typeof username === 'string' &&
-        username.trim().length > 0 &&
-        typeof comment === 'string' &&
-        comment.trim().length > 0 &&
-        typeof rating === 'number' &&
-        Number.isInteger(rating) &&
-        rating >= 1 &&
-        rating <= 5
-    );
+	return (
+		typeof product_id === 'string' &&
+		product_id.length === 36 &&
+		typeof username === 'string' &&
+		username.length === 36 &&
+		typeof comment === 'string' &&
+		comment.trim().length >= 2 &&
+		typeof rating === 'number' &&
+		Number.isInteger(rating) &&
+		rating >= 1 &&
+		rating <= 5
+	);
 }
 
 export async function POST(req: Request) {
