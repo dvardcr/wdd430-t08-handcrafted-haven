@@ -100,7 +100,7 @@ export async function getCommentsByProductId(productId: string): Promise<Comment
 
 
 
-export type NewArtisanData = Omit<Artisan, 'id'>; // id is generated on db given uuid_generate_v4()
+export type NewArtisanData = Omit<Artisan, 'id' | 'artisanId'>; // id is generated on db given uuid_generate_v4()
 export async function createArtisan(artisan: NewArtisanData) {
 	const { name, email, password, specialty, bio, imageUrl, location } = artisan;
 
