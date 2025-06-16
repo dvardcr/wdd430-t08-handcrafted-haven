@@ -1,9 +1,9 @@
 export interface Comment {
-	id: string;
-	username: string;
-	comment: string;
-	rating: number;
-	created_at: Date;
+    id: string;
+    username: string;
+    comment: string;
+    rating: number;
+    created_at: Date;
 }
 export type Product = {
     id: string;
@@ -14,3 +14,14 @@ export type Product = {
     category: string;
     artist: string;
 };
+
+export interface Artisan {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    specialty: string,
+    bio: string,
+    imageUrl: string,
+    location: string,
+}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { mockArtisans, type Artisan } from '@/lib/mockData';
 import { authOptions } from '@/lib/authOptions';
-import { updateArtisanPassword } from '@/app/lib/data';
+import { countArtisans, getArtisanByEmail, updateArtisanPassword } from '@/app/lib/data';
 
 type RouteContext = {
   params: {
@@ -80,4 +80,35 @@ export async function PUT(
     console.error("API PUT Error:", error);
     return new NextResponse(JSON.stringify({ message: 'Invalid request data' }), { status: 400 });
   }
-} 
+}
+
+// export async function POST(request: NextRequest): Promise<NextResponse> {
+//   const body = await request.json();
+//   const { name, email, password, specialty, bio, imageUrl, location } = body;
+
+//   const requiredFields = [name, email, password, specialty, bio, location];
+//   if (requiredFields.some(field => !field)) {
+//     return new NextResponse(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
+//   }
+
+//   // Check wether the email already exists
+//   const exists = getArtisanByEmail(email) === email;
+//   if (exists) {
+//     return new NextResponse(JSON.stringify({ message: 'Email is already in use' }), { status: 409 });
+//   }
+
+//   const newArtisan = {
+//     id: await countArtisans() + 1,
+//     name,
+//     email,
+//     password,
+//     specialty,
+//     bio,
+//     imageUrl: imageUrl || '/images/artisans/art5.jpeg', // Provide a default image if none is given
+//     location,
+//   };
+
+//   console.log('New artisan created:', newArtisan); // debugging
+
+//   return NextResponse.json({ message: 'Artisan profile created successfully' }, { status: 201 });
+// }
