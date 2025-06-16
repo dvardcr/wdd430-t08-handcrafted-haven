@@ -1,27 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function SignOutButton() {
-  const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    const checkAuthCookie = () => {
-      // Example: next-auth usually uses `next-auth.session-token` (name varies by config)
-      const cookies = document.cookie;
-      const isLoggedIn =
-        cookies.includes('next-auth.session-token') || // standard
-        cookies.includes('__Secure-next-auth.session-token'); // if secure cookie is used
-      setIsSignedIn(isLoggedIn);
-    };
+  const { data: session, status } = useSession();
 
-    checkAuthCookie();
-  }, []);
+  const isSignedIn = status === 'authenticated';
 
-  if (isSignedIn === null) {
-    return null; // or a loading spinner
-  }
 
   return (
     <button

@@ -21,7 +21,7 @@ declare module "next-auth/jwt" {
   }
 }
 
-// This is a mock user database - replace with actual database
+// This is a mock user database
 const users = [
   {
     id: '1',
@@ -87,5 +87,16 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: 'jwt',
+  },
+  cookies: {
+    sessionToken: {
+      name: 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: Boolean(process.env.PRODUCTION) ? true : false, // true in production
+      },
+    },
   },
 }; 
