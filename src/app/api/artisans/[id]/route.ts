@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { mockArtisans, type Artisan } from '@/lib/mockData';
 import { authOptions } from '@/lib/authOptions';
+import { countArtisans, getArtisanByEmail, updateArtisanPassword } from '@/app/lib/data';
 
 type RouteContext = {
   params: {
@@ -14,7 +15,7 @@ export async function GET(
   context: RouteContext
 ): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
@@ -39,22 +40,75 @@ export async function PUT(
   context: RouteContext
 ): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
   }
 
   const artisanId = parseInt(context.params.id);
-  
-  // Check if the authenticated user is the owner of this artisan profile
+
   if (session.user.artisanId !== artisanId) {
-    return new NextResponse('Unauthorized', { status: 403 });
+    return new NextResponse(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
   }
 
   try {
-    const updatedArtisan = await request.json();
-    return NextResponse.json(updatedArtisan);
-  } catch {
-    return new NextResponse('Invalid request data', { status: 400 });
+    const body = await request.json();
+
+    // Check for the action flag
+    if (body.action === 'update_password') {
+
+      const { newPassword } = body;
+      if (!newPassword) {
+        return new NextResponse(JSON.stringify({ message: 'Password must be not be empty' }), { status: 400 });
+      }
+
+      const success = await updateArtisanPassword(body.email, newPassword);
+
+      if (success) {
+        return NextResponse.json({ message: 'Password updated successfully' });
+      } else {
+        return new NextResponse(JSON.stringify({ message: 'Artisan not found' }), { status: 404 });
+      }
+
+    } else {
+      const updatedArtisanData = body;
+      console.log("Updating artisan profile data:", updatedArtisanData);
+      return NextResponse.json(updatedArtisanData);
+    }
+
+  } catch (error) {
+    console.error("API PUT Error:", error);
+    return new NextResponse(JSON.stringify({ message: 'Invalid request data' }), { status: 400 });
   }
-} 
+}
+
+// export async function POST(request: NextRequest): Promise<NextResponse> {
+//   const body = await request.json();
+//   const { name, email, password, specialty, bio, imageUrl, location } = body;
+
+//   const requiredFields = [name, email, password, specialty, bio, location];
+//   if (requiredFields.some(field => !field)) {
+//     return new NextResponse(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
+//   }
+
+//   // Check wether the email already exists
+//   const exists = getArtisanByEmail(email) === email;
+//   if (exists) {
+//     return new NextResponse(JSON.stringify({ message: 'Email is already in use' }), { status: 409 });
+//   }
+
+//   const newArtisan = {
+//     id: await countArtisans() + 1,
+//     name,
+//     email,
+//     password,
+//     specialty,
+//     bio,
+//     imageUrl: imageUrl || '/images/artisans/art5.jpeg', // Provide a default image if none is given
+//     location,
+//   };
+
+//   console.log('New artisan created:', newArtisan); // debugging
+
+//   return NextResponse.json({ message: 'Artisan profile created successfully' }, { status: 201 });
+// }

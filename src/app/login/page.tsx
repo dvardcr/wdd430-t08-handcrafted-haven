@@ -36,6 +36,10 @@ export default function LoginPage() {
     }
   };
 
+  const handleSignUpRedirect = () => {
+    router.push('/sign-up');
+  }
+
   return (
     
     <div className={styles.container}>
@@ -65,14 +69,21 @@ export default function LoginPage() {
               disabled={isLoading}
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.submitButton}
             disabled={isLoading}
           >
             {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
+        <hr style={{ marginTop: '30px' }}></hr>
+        <div className='text-center'>
+          <p style={{ marginTop: '30px', marginBottom: '30px', fontSize: '12px' }}>Not an artisan yet?</p>
+          <button onClick={handleSignUpRedirect}>
+            Sign Up
+          </button>
+        </div>
       </div>
     </div>
   );
