@@ -3,6 +3,7 @@ import Search from "@/app/ui/products/search";
 import ProductsList from "@/app/ui/products/product-list";
 import {Suspense} from "react";
 import {Product} from "@/app/lib/definitions";
+import styles from "@/app/style.module.css";
 
 export default async function ProductsGalleryPage() {
 	const rows = await fetchProducts();
@@ -19,6 +20,7 @@ export default async function ProductsGalleryPage() {
 
 	return (
 		<main>
+			<h1 className={styles.title}>Handcrafted Haven</h1>
 			<h1>All Products</h1>
 			
 			<Suspense fallback={<div>Loading products...</div>}>
