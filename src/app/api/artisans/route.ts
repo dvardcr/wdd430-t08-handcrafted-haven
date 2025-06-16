@@ -1,4 +1,4 @@
-import { countArtisans, createArtisan, getArtisanByEmail } from "@/app/lib/data";
+import { countArtisans, createArtisan, getArtisanEmailByEmail } from "@/app/lib/data";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check wether the email already exists
-    const exists = getArtisanByEmail(email) === email;
+    const exists = getArtisanEmailByEmail(email) === email;
     if (exists) {
         return new NextResponse(JSON.stringify({ message: 'Email is already in use' }), { status: 409 });
     }

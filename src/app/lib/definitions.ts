@@ -24,4 +24,5 @@ export interface Artisan {
     bio: string,
     imageUrl: string,
     location: string,
+    artisanId: number
 }

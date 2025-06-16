@@ -47,7 +47,7 @@ export async function getProductById(id: string) {
 	return result[0];
 }
 
-export async function getArtisanByEmail(email: string) {
+export async function getArtisanEmailByEmail(email: string) {
 	const result = await sql`
 		SELECT 
 			a.email
@@ -58,6 +58,17 @@ export async function getArtisanByEmail(email: string) {
 	return result[0];
 }
 
+export async function getArtisanByEmail(email: string): Promise<Artisan | undefined> {
+	try {
+		const result = await sql<Artisan[]>`
+		SELECT *, artisan_id as "artisanId" FROM artisans WHERE email = ${email}
+	  `;
+		return result[0];
+	} catch (error) {
+		console.error('Failed to fetch artisan:', error);
+		throw new Error('Failed to fetch artisan.');
+	}
+}
 
 export async function countArtisans() {
 

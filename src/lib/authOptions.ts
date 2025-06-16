@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { NextAuthOptions } from 'next-auth';
 import type { User } from 'next-auth';
+import { getArtisanByEmail } from '@/app/lib/data';
 
 // Extend the built-in session types
 declare module "next-auth" {
@@ -21,25 +22,6 @@ declare module "next-auth/jwt" {
   }
 }
 
-// This is a mock user database
-const users = [
-  {
-    id: '1',
-    name: 'Emma Thompson',
-    email: 'emma@example.com',
-    password: 'password123', // In production, use hashed passwords
-    artisanId: 1,
-  },
-  {
-    id: '2',
-    name: 'James Wilson',
-    email: 'james@example.com',
-    password: 'password123',
-    artisanId: 2,
-  },
-  // Add more users as needed
-];
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -53,18 +35,28 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = users.find(user => user.email === credentials.email);
+        const artisan = await getArtisanByEmail(credentials.email);
 
-        if (user && user.password === credentials.password) {
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            artisanId: user.artisanId,
-          } as User;
+        if (!artisan) {
+          console.log('No user found with that email.');
+          return null; // If no user is found, authentication fails
         }
 
-        return null;
+        // 2. Compare the provided password with the hashed password from the database
+        const passwordsMatch = credentials.password === artisan.password;
+
+        if (!passwordsMatch) {
+          console.log('Passwords do not match.');
+          return null; // authentication fails
+        }
+
+        console.log('Authentication done for:', artisan.email);
+        return {
+          id: artisan.id,
+          name: artisan.name,
+          email: artisan.email,
+          artisanId: artisan.artisanId,
+        };
       }
     })
   ],
@@ -77,7 +69,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.artisanId = token.artisanId;
+        session.user.artisanId = token.artisanId as number;
       }
       return session;
     }
