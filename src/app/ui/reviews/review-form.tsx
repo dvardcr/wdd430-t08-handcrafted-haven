@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import styles from './review-form.module.css';
 import { Comment } from '@/app/lib/definitions';
 import { addReview, updateReview, deleteReview } from '@/app/lib/actions';
 
@@ -15,27 +16,39 @@ export default function ReviewForm({ productId, existingComments }: ReviewFormPr
 	const [rating, setRating] = useState(5);
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [comments, setComments] = useState<Comment[]>(existingComments);
+	const [error, setError] = useState<string | null>(null);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!username.trim() || !commentText.trim()) return;
+		setError(null);
+
+		if (!username.trim()) {
+			setError('Username is required.');
+			return;
+		}
+
+		if (!commentText.trim()) {
+			setError('Comment is required.');
+			return;
+		}
+
+		if (rating < 1 || rating > 5) {
+			setError('Rating must be between 1 and 5.');
+			return;
+		}
 
 		if (editingId) {
-			const updated: Comment | null = await updateReview(editingId, {
+			const updated = await updateReview(editingId, {
 				username,
 				comment: commentText,
 				rating,
 			});
 			if (updated) {
-				setComments(
-					comments.map((c) =>
-						c.id === editingId ? updated : c
-					)
-				);
+				setComments(comments.map((c) => (c.id === editingId ? updated : c)));
 				setEditingId(null);
 			}
 		} else {
-			const newComment: Comment | null = await addReview(productId, {
+			const newComment = await addReview(productId, {
 				username,
 				comment: commentText,
 				rating,
@@ -69,6 +82,8 @@ export default function ReviewForm({ productId, existingComments }: ReviewFormPr
 	return (
 		<div>
 			<form onSubmit={handleSubmit}>
+				{error && <p style={{ color: 'red' }}>{error}</p>}
+
 				<input
 					type="text"
 					placeholder="Your name"
@@ -94,7 +109,7 @@ export default function ReviewForm({ productId, existingComments }: ReviewFormPr
 					</select>
 				</label>
 				<br />
-				<button type="submit">
+				<button type="submit" className={styles.submitButton}>
 					{editingId ? 'Update Comment' : 'Submit Comment'}
 				</button>
 			</form>
@@ -105,8 +120,8 @@ export default function ReviewForm({ productId, existingComments }: ReviewFormPr
 						<strong>{c.username}</strong> – Rating: {c.rating} <br />
 						{c.comment} <br />
 						<small>{c.created_at.toLocaleDateString()}</small> <br />
-						<button onClick={() => handleEdit(c.id)}>Edit</button>
-						<button onClick={() => handleDelete(c.id)} style={{ marginLeft: '8px' }}>
+						<button onClick={() => handleEdit(c.id)} className={styles.submitButton}>Edit</button>
+						<button onClick={() => handleDelete(c.id)} className={styles.submitButton} style={{ marginLeft: '8px' }}>
 							Delete
 						</button>
 					</li>
