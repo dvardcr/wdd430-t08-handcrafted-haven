@@ -78,7 +78,7 @@ export default function LoginPage() {
           </button>
         </form>
         <hr style={{ marginTop: '30px' }}></hr>
-        <div className='text-center'>
+        <div className={styles.formGroup}>
           <p style={{ marginTop: '30px', marginBottom: '30px', fontSize: '12px' }}>Not an artisan yet?</p>
           <button onClick={handleSignUpRedirect}>
             Sign Up

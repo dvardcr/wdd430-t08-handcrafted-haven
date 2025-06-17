@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './sign-up.module.css';
+import styles from '@/app/login/login.module.css';
 
 export default function SignUpPage() {
     const router = useRouter();
@@ -115,7 +115,7 @@ export default function SignUpPage() {
                     </button>
                 </form>
                 <hr style={{ marginTop: '30px' }}></hr>
-                <div className='text-center'>
+                <div className={styles.formGroup}>
                     <p style={{ marginTop: '30px', marginBottom: '30px', fontSize: '12px' }}>Already an artisan?</p>
                     <button onClick={handleLogInRedirect}>
                         Log In
