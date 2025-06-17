@@ -34,12 +34,16 @@
   gap: 0.5rem;
 }
 
-.formGroup label {
+.formGroup label, .formGroup p {
   font-weight: 500;
   color: black;
 }
 
-.formGroup input {
+.formGroup p {
+  text-align: center;
+}
+
+.formGroup input, .formGroup textarea {
   padding: 0.75rem;
   border: 1px solid gray;
   border-radius: 4px;
@@ -47,7 +51,7 @@
   color: black;
 }
 
-.submitButton {
+.submitButton, .formGroup button {
   background-color: black;
   color: white;
   padding: 0.75rem;
