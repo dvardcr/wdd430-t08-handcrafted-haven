@@ -17,7 +17,7 @@ export type Artisan = {
 
 export const mockArtisans: Artisan[] = [
   {
-    id: 1,
+    id: 5,
     name: "Emma Thompson",
     specialty: "Ceramics",
     bio: "Creating handcrafted pottery for over 15 years, specializing in functional pieces that bring beauty to everyday life.",
@@ -111,7 +111,7 @@ export const mockArtisans: Artisan[] = [
     ],
   },
   {
-    id: 5,
+    id: 1,
     name: "Lisa Patel",
     specialty: "Jewelry Making",
     bio: "Crafting unique jewelry pieces that tell stories through precious metals and stones.",

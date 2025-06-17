@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { mockArtisans, type Artisan } from '@/lib/mockData';
 import { authOptions } from '@/lib/authOptions';
-import { countArtisans, getArtisanByEmail, updateArtisanPassword } from '@/app/lib/data';
+import { countArtisans, createProduct, getArtisanByEmail, updateArtisanPassword } from '@/app/lib/data';
+import { Product } from '@/app/lib/definitions';
 
 type RouteContext = {
   params: {
@@ -82,33 +83,31 @@ export async function PUT(
   }
 }
 
-// export async function POST(request: NextRequest): Promise<NextResponse> {
-//   const body = await request.json();
-//   const { name, email, password, specialty, bio, imageUrl, location } = body;
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const product = await request.json();
+  const { name,
+    description,
+    imageUrl,
+    price,
+    category,
+    artisanId, action } = product;
 
-//   const requiredFields = [name, email, password, specialty, bio, location];
-//   if (requiredFields.some(field => !field)) {
-//     return new NextResponse(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
-//   }
 
-//   // Check wether the email already exists
-//   const exists = getArtisanByEmail(email) === email;
-//   if (exists) {
-//     return new NextResponse(JSON.stringify({ message: 'Email is already in use' }), { status: 409 });
-//   }
+  const newProduct = {
+    name,
+    description,
+    imageUrl,
+    price,
+    category,
+    artisanId
+  };
 
-//   const newArtisan = {
-//     id: await countArtisans() + 1,
-//     name,
-//     email,
-//     password,
-//     specialty,
-//     bio,
-//     imageUrl: imageUrl || '/images/artisans/art5.jpeg', // Provide a default image if none is given
-//     location,
-//   };
+  let newInsertedProduct;
+  console.log('New product to be created:', newProduct); // debugging
 
-//   console.log('New artisan created:', newArtisan); // debugging
+  if (action === 'add-product') {
+    newInsertedProduct = await createProduct(newProduct);
+  }
 
-//   return NextResponse.json({ message: 'Artisan profile created successfully' }, { status: 201 });
-// }
+  return NextResponse.json({ message: 'Artisan profile created successfully' }, { status: 201 });
+}

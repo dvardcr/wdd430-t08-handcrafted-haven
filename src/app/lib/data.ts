@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { Comment, Artisan } from '@/app/lib/definitions';
+import { Comment, Artisan, Product } from '@/app/lib/definitions';
 
 export const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -12,8 +12,34 @@ export async function updateArtisanPassword(email: string, password: string) {
 	`;
 }
 
+export type NewProductData = Omit<Product, 'id'>; // id is generated on db given uuid_generate_v4()
+export async function createProduct(product: NewProductData) {
+	console.log("product", product);
 
+	const { name,
+		description,
+		imageUrl,
+		price,
+		category,
+		artisanId } = product;
 
+	let result = await sql`
+		SELECT 
+			a.id
+		FROM artisans a
+		WHERE a.artisan_id = ${artisanId}
+	`;
+
+	console.log("first result", result);
+
+	result = await sql`
+		INSERT INTO products(name, description, image_url, price, category, artisan_id) VALUES(${name}, ${description}, ${imageUrl}, ${price}, ${category}, ${result[0]?.id}) 
+		RETURNING name, description, artisan_id;
+	`;
+
+	// Return the newly created product
+	return result;
+}
 export async function fetchProducts() {
 	return await sql`
     SELECT 
@@ -113,3 +139,4 @@ export async function createArtisan(artisan: NewArtisanData) {
 	// Return the newly created artisan
 	return result[0];
 }
+
