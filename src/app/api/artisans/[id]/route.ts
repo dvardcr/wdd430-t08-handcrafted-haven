@@ -71,9 +71,6 @@ export async function PUT(
         return new NextResponse(JSON.stringify({ message: 'Artisan not found' }), { status: 404 });
       }
 
-    } else if (body.action === 'add-product') {
-      // insert to the db
-      return;
     } else {
       const updatedArtisanData = body;
       console.log("Updating artisan profile data:", updatedArtisanData);
@@ -111,7 +108,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (action === 'add-product') {
     newInsertedProduct = await createProduct(newProduct);
   }
-  console.log('New artisan created:', newInsertedProduct?.id); // debugging
 
   return NextResponse.json({ message: 'Artisan profile created successfully' }, { status: 201 });
 }
