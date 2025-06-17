@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {useSearchParams} from "next/navigation";
-import {Product} from "@/app/lib/definitions";
+import { useSearchParams } from "next/navigation";
+import { ProductSecond } from "@/app/lib/definitions";
 import styles from "@/app/style.module.css";
 
-export default function ProductsList({products}: {products: Product[]}) {
+export default function ProductsList({ products }: { products: ProductSecond[] }) {
 	const searchParams = useSearchParams();
 	const query = searchParams.get("query")?.toLowerCase() || "";
 
@@ -22,7 +22,7 @@ export default function ProductsList({products}: {products: Product[]}) {
 	return (
 		<div className={styles.productPage}
 		>
-			
+
 			{filteredProducts.map((product) => (
 				<Link key={product.id} href={`/products/${product.id}`}>
 					<div className={styles.productCard}
@@ -32,7 +32,7 @@ export default function ProductsList({products}: {products: Product[]}) {
 							alt={product.name}
 							width={300}
 							height={200}
-							style={{objectFit: "cover", width: "100%", height: "auto"}}
+							style={{ objectFit: "cover", width: "100%", height: "auto" }}
 						/>
 						<h2>{product.name}</h2>
 						<p>
@@ -49,7 +49,7 @@ export default function ProductsList({products}: {products: Product[]}) {
 			))}
 
 			{filteredProducts.length === 0 && (
-				<p style={{gridColumn: "1 / -1"}}>No products found.</p>
+				<p style={{ gridColumn: "1 / -1" }}>No products found.</p>
 			)}
 		</div>
 	);

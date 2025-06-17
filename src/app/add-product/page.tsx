@@ -13,7 +13,7 @@ export default function AddProductPage() {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
-    const [imageUrl, setImageUrl] = useState(''); 
+    const [imageUrl, setImageUrl] = useState('');
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +24,8 @@ export default function AddProductPage() {
 
         setIsLoading(true);
 
+        const artisanIdFromCookie = session?.user.artisanId;
+        console.log("artisanIdFromCookie", artisanIdFromCookie);
         try {
             const response = await fetch(`/api/artisans/${session?.user.artisanId}`, {
                 method: 'POST',
@@ -37,18 +39,18 @@ export default function AddProductPage() {
                     price: price,
                     category: category,
                     imageUrl: imageUrl,
-                    artisanId: session?.user.artisanId,
+                    artisanId: artisanIdFromCookie,
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Failed to create profile.');
+                throw new Error(data.message || 'Failed to create product.');
             }
 
-            // On success, redirect to the login page
-            router.push('/login');
+            // On success, redirect to the artisans page
+            router.push(`/artisans/edit/${session?.user.artisanId}`);
 
         } catch (error: any) {
             setError(error.message);
@@ -85,12 +87,12 @@ export default function AddProductPage() {
                     </div>
                     <div className={styles.formGroup}>
                         <label htmlFor="imageUrl">Product Image URL (Optional)</label>
-                        <input id="imageUrl" type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} disabled={isLoading} placeholder="https://example.com/image.jpg" />
+                        <input id="imageUrl" type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} disabled={isLoading} placeholder="https://example.com/image.jpg" />
                     </div>
 
                     <hr style={{ margin: '20px 0' }} />
 
-                    
+
 
                     <button type="submit" className={styles.submitButton} disabled={isLoading}>
                         {isLoading ? 'Creating Product...' : 'Add New'}

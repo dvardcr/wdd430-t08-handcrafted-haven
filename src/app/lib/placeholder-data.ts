@@ -1,6 +1,6 @@
-import {Product} from "@/app/lib/definitions";
+import { ProductSecond } from "@/app/lib/definitions";
 
-export const products: Product[] = [
+export const products: ProductSecond[] = [
     {
         id: "1",
         name: "Handwoven Basket",
@@ -100,4 +100,4 @@ export const products: Product[] = [
         artist: "Maria Lopez",
         category: "Jewelry",
     },
-    ];
+];
